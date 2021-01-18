@@ -7,8 +7,8 @@ import com.arkivanov.mvikotlin.core.store.Reducer
 internal class Reducer : Reducer<State, Result> {
     override fun State.reduce(result: Result): State {
         return when (result) {
-            is Result.Increment -> {
-                copy(blankCount = blankCount + result.value)
+            is Result.ChangeCharacter -> {
+                copy(character = result.result)
             }
             is Result.ChangeConnection -> {
                 copy(connected = result.connected)

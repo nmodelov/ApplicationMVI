@@ -53,6 +53,14 @@ dependencies {
     // Cicerone
     implementation dep('com.github.aradxxx:ciceroneflows')
 
+    // Retrofit
+    implementation dep('com.squareup.retrofit2:retrofit')
+    implementation dep('com.squareup.retrofit2:converter-moshi')
+
+    // Json parser
+    implementation dep('com.squareup.moshi:moshi-kotlin')
+    kapt dep('com.squareup.moshi:moshi-kotlin-codegen')
+
     // Preference
     implementation dep('androidx.preference:preference-ktx')
 

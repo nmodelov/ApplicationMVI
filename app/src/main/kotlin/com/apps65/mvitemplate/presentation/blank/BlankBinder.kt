@@ -49,15 +49,18 @@ class BlankBinder @Inject constructor(
      * Optional. See [com.apps65.mvi.SimpleBinder]
      */
     override val stateToModel: suspend (State.() -> Model) = {
-        Model(this.blankCount, this.connected, this.diceState)
+        Model(
+            character = this.character,
+            connection = this.connected,
+            diceState = this.diceState
+        )
     }
 
     override val eventToIntent: suspend (Event.() -> Intent) = {
         when (this) {
-            Event.OnBlankClick -> Intent.Increment
-            Event.OnResultClick -> Intent.OnResult
-            Event.RollDice -> Intent.RollDice
-            Event.SubNavigation -> Intent.SubNavigation
+            //Event.OnResultClick -> Intent.OnResult
+            //Event.RollDice -> Intent.RollDice
+            //Event.SubNavigation -> Intent.SubNavigation
         }
     }
 }

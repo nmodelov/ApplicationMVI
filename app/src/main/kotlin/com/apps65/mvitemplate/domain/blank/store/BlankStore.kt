@@ -1,6 +1,7 @@
 package com.apps65.mvitemplate.domain.blank.store
 
 import android.os.Parcelable
+import com.apps65.mvitemplate.data.ResultCharacter
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.Intent
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.Label
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.State
@@ -9,7 +10,6 @@ import kotlinx.parcelize.Parcelize
 
 interface BlankStore : Store<Intent, State, Label> {
     sealed class Intent {
-        object Increment : Intent()
         object OnResult : Intent()
         object RollDice : Intent()
         object SubNavigation : Intent()
@@ -17,12 +17,13 @@ interface BlankStore : Store<Intent, State, Label> {
 
     sealed class Action {
         data class Connection(val connected: Boolean) : Action()
+        data class GetCharacter(val character: ResultCharacter): Action()
     }
 
     @Parcelize
     data class State(
-        val blankCount: Int,
-        val connected: Boolean = false,
+        val character: ResultCharacter? = null,
+        val connected: Boolean = true,
         val diceState: DiceState? = null
     ) : Parcelable
 

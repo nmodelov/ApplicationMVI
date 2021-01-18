@@ -68,7 +68,7 @@ object BlankTest : Spek({
 
         it("should be 1 after increment") {
             runBlockingTest(dispatcher) {
-                blankStore.accept(BlankStore.Intent.Increment)
+                blankStore.accept(BlankStore.Intent.OnUserText)
                 advanceUntilIdle() // <-- Если в проверяемом коде есть delay
                 val currentState = blankStore.state
                 assertThat(currentState.blankCount).isEqualTo(1)
@@ -88,7 +88,7 @@ object BlankTest : Spek({
                         }
                     }
                 )
-                blankStore.accept(BlankStore.Intent.Increment)
+                blankStore.accept(BlankStore.Intent.OnUserText)
                 advanceUntilIdle()
                 assertThat(label).isEqualTo(BlankStore.Label.Blank)
             }

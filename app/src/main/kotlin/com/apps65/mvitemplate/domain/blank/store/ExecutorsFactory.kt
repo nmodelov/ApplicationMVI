@@ -32,21 +32,16 @@ internal class ExecutorsFactory @Inject constructor(
              */
             override suspend fun executeIntent(intent: Intent, getState: () -> State) {
                 when (intent) {
-                    is Intent.Increment -> executeIncrement()
-                    Intent.OnResult -> publish(Label.Result(getState().blankCount))
-                    Intent.SubNavigation -> publish(Label.SubNavigation)
+                    //Intent.OnResult -> publish(Label.Result(getState().blankCount))
+                    //Intent.SubNavigation -> publish(Label.SubNavigation)
                 }
             }
 
             override suspend fun executeAction(action: Action, getState: () -> State) {
                 when (action) {
                     is Action.Connection -> dispatch(Result.ChangeConnection(action.connected))
+                    is Action.GetCharacter -> dispatch(Result.ChangeCharacter(action.character))
                 }
-            }
-
-            private suspend fun executeIncrement() {
-                publish(Label.Blank)
-                dispatch(Result.Increment(1))
             }
         }
     }

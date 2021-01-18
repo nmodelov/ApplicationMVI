@@ -1,6 +1,8 @@
 package com.apps65.mvitemplate.domain.blank.store
 
 import com.apps65.mvi.saving.SavedStateKeeper
+import com.apps65.mvitemplate.data.CharactersService
+import com.apps65.mvitemplate.data.ResultCharacter
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.Intent
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.Label
 import com.apps65.mvitemplate.domain.blank.store.BlankStore.State
@@ -8,7 +10,10 @@ import com.apps65.netutils.connection.ConnectionService
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.SuspendBootstrapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val BLANK_STORE_STATE = "blank_store_state"
@@ -17,7 +22,7 @@ internal class BlankStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val stateKeeper: SavedStateKeeper,
     private val executorsFactory: ExecutorsFactory,
-    private val connectionService: ConnectionService
+    private val charactersService: CharactersService
 ) {
 
     fun create(): BlankStore {
@@ -38,16 +43,19 @@ internal class BlankStoreFactory @Inject constructor(
 
     private val bootstrapper = object : SuspendBootstrapper<BlankStore.Action>() {
         override suspend fun bootstrap() {
-            connectionService.observeConnectionState()
-                .collect {
-                    dispatch(BlankStore.Action.Connection(it))
-                }
+            dispatch(BlankStore.Action.Connection(true))
+            val result = withContext(Dispatchers.IO) {
+                charactersService.getCharacterById(1)
+            }
+            dispatch(BlankStore.Action.Connection(false))
+            dispatch(BlankStore.Action.GetCharacter(result.result))
+            Timber.d(result.toString())
         }
     }
 
     private fun getInitialState(): State {
         val savedState = stateKeeper.get<State>(BLANK_STORE_STATE)
-        return savedState ?: State(0)
+        return savedState ?: State(character = null)
     }
 
     private fun registerStateKeeper(store: BlankStore) {
@@ -59,7 +67,7 @@ internal class BlankStoreFactory @Inject constructor(
     }
 
     sealed class Result {
-        data class Increment(val value: Int) : Result()
+        data class ChangeCharacter(val result: ResultCharacter): Result()
         data class ChangeConnection(val connected: Boolean) : Result()
         data class DiceResult(val diceState: BlankStore.DiceState) : Result()
     }
